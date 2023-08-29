@@ -1,23 +1,31 @@
-import logo from './logo.svg';
 import './App.css';
+import { Validators } from './model/validators';
+import { useRef, useState, useEffect } from 'react';
 
 function App() {
+
+  let query = useRef('')
+  let [checkResults, setCheckResults] = useState({})
+
+  function validateQuery(event){
+    event.preventDefault();
+    setCheckResults(Validators.validateQuery(query.current.value));
+  }
+
+  useEffect(()=>{
+    if(checkResults.isValid){
+      console.log(checkResults.parenthesisArray);
+    }
+  },[checkResults])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h2>Tablas de verdad</h2>
+      <form onSubmit={validateQuery}>
+        <input type='text' placeholder='p^(q->r)' ref={query} />
+        <button>Crear tabla de verdad</button>
+        {checkResults?.message && <span className='error-message'>{checkResults?.message}</span>}
+      </form>
     </div>
   );
 }
