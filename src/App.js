@@ -6,6 +6,7 @@ function App() {
 
   let query = useRef('')
   let [checkResults, setCheckResults] = useState({})
+  let [resultsDict, setResultsDictionary] = useState([])
 
   function validateQuery(event){
     event.preventDefault();
@@ -14,7 +15,11 @@ function App() {
 
   useEffect(()=>{
     if(checkResults.isValid){
-      console.log(checkResults.parenthesisArray);
+      let rowQuantity = 2**(checkResults.variables.length);
+      let dict = []
+      for(let variable of checkResults.variables){
+        
+      }
     }
   },[checkResults])
 
