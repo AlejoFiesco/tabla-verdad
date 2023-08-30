@@ -11,13 +11,15 @@ export class Validators{
     }
 
     static checkParenthesis(query){
+        let exp = /(\(|\))/g
         let parenthesisArray = query.match(/(\(|\))/g);
+        let indexes = []
         if(parenthesisArray === null) return {
             isValid : true,
             expression: query,
             parenthesisArray: []
         }
-        parenthesisArray = parenthesisArray.filter(c => c!== '')
+        // parenthesisArray = parenthesisArray.filter(c => c!== '')
         let queue = []
         for(let parenthesis of parenthesisArray) {
             if(parenthesis === '(') queue.push(parenthesis)
@@ -29,11 +31,23 @@ export class Validators{
                 queue.pop()
             }
         }
+
+        for(let i = 0; i < query.length; i++){
+            if(query.charAt(i) === '(' || query.charAt(i) === ')') indexes.push({char: query.charAt(i), index: i})
+        }
         return{
             isValid : queue.length === 0,
             expression: query,
-            parenthesisArray: parenthesisArray
+            parenthesisIndexes: indexes
         }
+    }
+
+    static validateVariables(query){
+        let variables = []
+        if(query.includes('p')) variables.push('p')
+        if(query.includes('q')) variables.push('q')
+        if(query.includes('r')) variables.push('r')
+        return variables
     }
 
     
@@ -44,8 +58,10 @@ export class Validators{
         if(!validatedParenthesis.isValid) return {message: 'Verifique los paréntesis de la expresión', isValid: false}
         return {
             isValid: true, 
-            parenthesisArray: validatedParenthesis.parenthesisArray, 
-            expression: validatedParenthesis.expression}
+            parenthesisIndexes: validatedParenthesis.parenthesisIndexes, 
+            expression: validatedParenthesis.expression,
+            variables: Validators.validateVariables(validatedParenthesis.expression)
+        }
     }
     
 }
