@@ -1,4 +1,5 @@
 import './App.css';
+import { Solvers } from './model/solvers';
 import { Validators } from './model/validators';
 import { useRef, useState, useEffect } from 'react';
 
@@ -14,12 +15,9 @@ function App() {
   }
 
   useEffect(()=>{
-    if(checkResults.isValid){
-      let rowQuantity = 2**(checkResults.variables.length);
-      let dict = []
-      for(let variable of checkResults.variables){
-        
-      }
+    if(checkResults.isValid){  
+      let truthTable = Solvers.createTruthTable(checkResults);
+      setResultsDictionary(truthTable);
     }
   },[checkResults])
 
@@ -31,6 +29,20 @@ function App() {
         <button>Crear tabla de verdad</button>
         {checkResults?.message && <span className='error-message'>{checkResults?.message}</span>}
       </form>
+      <section id='truth-table'>
+        {resultsDict.length !== 0 && Object.keys(resultsDict).map((key)=>{
+          return(
+            <div className='row' key={key}>
+              <span className='row__head'>
+                {key}
+              </span>
+              {resultsDict[key].map((value, index)=>
+                <span className='row__content' key={`${key} ${index}`}>{value}</span>
+              )}
+            </div>
+          )
+        })}
+      </section>
     </div>
   );
 }

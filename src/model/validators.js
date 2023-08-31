@@ -1,7 +1,7 @@
 export class Validators{
     static checkCharacters(query){
         query = query.replace(/\s+/g, '');
-        let exp = /([p-r]|\(|\)|\^|\||(->)|(<->)|~)*/;
+        let exp = /([p-r]|\(|\)|\&|\||(->)|(<->)|!)*/;
         let expected = exp.exec(query)[0];
         
         return {
@@ -50,18 +50,29 @@ export class Validators{
         return variables
     }
 
+    static replaceOperators(query){
+        query = query.replace('<->', '==')
+        if(query.includes('->')){
+            query = '!'+query;
+            query = query.replace('->', '|')
+        }
+        return query
+    }
+
     
     static validateQuery(query){
         let validatedCharacters = Validators.checkCharacters(query)
         if(!validatedCharacters.isValid) return {message:'La expresión contiene caracteres incorrectos', isValid: false}
         let validatedParenthesis = Validators.checkParenthesis(validatedCharacters.expression)
         if(!validatedParenthesis.isValid) return {message: 'Verifique los paréntesis de la expresión', isValid: false}
-        return {
+        let returningObject = {
             isValid: true, 
             parenthesisIndexes: validatedParenthesis.parenthesisIndexes, 
             expression: validatedParenthesis.expression,
+            replacedVariablesExpression: Validators.replaceOperators(validatedParenthesis.expression),
             variables: Validators.validateVariables(validatedParenthesis.expression)
         }
+        return returningObject
     }
     
 }
